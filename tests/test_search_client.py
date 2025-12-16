@@ -4,7 +4,7 @@ Azure Search Client Unit Tests
 
 import sys
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 
@@ -108,8 +108,7 @@ class TestAzureSearchClient:
         """Test client raises error when env vars missing"""
         from search_client import AzureSearchClient
 
-        with patch.dict("os.environ", {}, clear=True):
-            with pytest.raises(ValueError, match="must be set"):
+        with patch.dict("os.environ", {}, clear=True), pytest.raises(ValueError, match="must be set"):
                 AzureSearchClient()
 
     def test_client_initialization_success(self, mock_env, mock_credential):
@@ -140,7 +139,9 @@ class TestAzureSearchClient:
             assert len(embedding) == 3072
             mock_openai_client.embeddings.create.assert_called_once()
 
-    def test_generate_embeddings_batch(self, mock_env, mock_credential, mock_openai_client):
+    def test_generate_embeddings_batch(
+        self, mock_env, mock_credential, mock_openai_client
+    ):
         """Test batch embedding generation"""
         from search_client import AzureSearchClient
 
@@ -160,7 +161,9 @@ class TestAzureSearchClient:
 class TestSearchOperations:
     """Search operation tests"""
 
-    def test_search_returns_results(self, mock_env, mock_credential, mock_search_client):
+    def test_search_returns_results(
+        self, mock_env, mock_credential, mock_search_client
+    ):
         """Test basic search returns SearchResult objects"""
         from search_client import AzureSearchClient
 
@@ -176,7 +179,9 @@ class TestSearchOperations:
             assert results[0].title == "Test Document"
             assert results[0].score == 0.95
 
-    def test_vector_search_with_query(self, mock_env, mock_credential, mock_search_client, mock_openai_client):
+    def test_vector_search_with_query(
+        self, mock_env, mock_credential, mock_search_client, mock_openai_client
+    ):
         """Test vector search with text query"""
         from search_client import AzureSearchClient
 
@@ -190,7 +195,9 @@ class TestSearchOperations:
             results = client.vector_search(query="test query")
             assert len(results) == 1
 
-    def test_vector_search_requires_query_or_vector(self, mock_env, mock_credential, mock_search_client):
+    def test_vector_search_requires_query_or_vector(
+        self, mock_env, mock_credential, mock_search_client
+    ):
         """Test vector search raises error without query or vector"""
         from search_client import AzureSearchClient
 

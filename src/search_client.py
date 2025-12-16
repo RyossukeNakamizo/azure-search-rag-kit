@@ -19,13 +19,10 @@ import logging
 import os
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Any, Generator
-from uuid import uuid4
+from typing import Any
 
 from azure.core.credentials import TokenCredential
 from azure.core.exceptions import (
-    AzureError,
-    HttpResponseError,
     ResourceExistsError,
     ResourceNotFoundError,
 )
@@ -35,8 +32,8 @@ from azure.search.documents.indexes import SearchIndexClient
 from azure.search.documents.indexes.models import SearchIndex
 from azure.search.documents.models import (
     QueryType,
-    VectorizedQuery,
     VectorizableTextQuery,
+    VectorizedQuery,
 )
 from openai import AzureOpenAI
 
@@ -209,7 +206,7 @@ class AzureSearchClient:
             ResourceExistsError: インデックスが既に存在する場合
             FileNotFoundError: スキーマファイルが見つからない場合
         """
-        with open(schema_path, "r", encoding="utf-8") as f:
+        with open(schema_path, encoding="utf-8") as f:
             schema = json.load(f)
 
         try:
@@ -230,7 +227,7 @@ class AzureSearchClient:
         Returns:
             作成/更新されたSearchIndexオブジェクト
         """
-        with open(schema_path, "r", encoding="utf-8") as f:
+        with open(schema_path, encoding="utf-8") as f:
             schema = json.load(f)
 
         index = self._index_client.create_or_update_index(schema)
@@ -349,9 +346,7 @@ class AzureSearchClient:
         result = self._search_client.upload_documents(documents=docs_dict)
 
         success_count = sum(1 for r in result if r.succeeded)
-        logger.info(
-            f"Uploaded {success_count}/{len(documents)} documents successfully"
-        )
+        logger.info(f"Uploaded {success_count}/{len(documents)} documents successfully")
 
         return {
             "total": len(documents),
@@ -648,7 +643,10 @@ class AzureSearchClient:
 
         if confidentiality_levels:
             level_filter = " or ".join(
-                [f"metadata_confidentialityLevel eq '{lvl}'" for lvl in confidentiality_levels]
+                [
+                    f"metadata_confidentialityLevel eq '{lvl}'"
+                    for lvl in confidentiality_levels
+                ]
             )
             filters.append(f"({level_filter})")
 

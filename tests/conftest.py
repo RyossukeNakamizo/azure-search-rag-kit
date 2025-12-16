@@ -33,16 +33,18 @@ def mock_credential():
 def mock_search_client():
     """Mock SearchClient"""
     client = MagicMock()
-    client.search.return_value = iter([
-        {
-            "id": "doc1",
-            "title": "Test Document",
-            "content": "Test content",
-            "chunk": "Test chunk",
-            "@search.score": 0.95,
-            "category": "Test",
-        }
-    ])
+    client.search.return_value = iter(
+        [
+            {
+                "id": "doc1",
+                "title": "Test Document",
+                "content": "Test content",
+                "chunk": "Test chunk",
+                "@search.score": 0.95,
+                "category": "Test",
+            }
+        ]
+    )
     client.get_document_count.return_value = 100
     return client
 
@@ -51,12 +53,12 @@ def mock_search_client():
 def mock_openai_client():
     """Mock OpenAI client"""
     client = MagicMock()
-    
+
     # Mock embedding response
     embedding_response = MagicMock()
     embedding_response.data = [MagicMock(embedding=[0.1] * 3072)]
     client.embeddings.create.return_value = embedding_response
-    
+
     return client
 
 
@@ -64,7 +66,7 @@ def mock_openai_client():
 def sample_document():
     """Sample document for testing"""
     from search_client import Document, DocumentMetadata
-    
+
     return Document(
         id="test-doc-1",
         document_id="test-doc",
