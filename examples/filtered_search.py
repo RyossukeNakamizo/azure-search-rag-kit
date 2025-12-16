@@ -25,27 +25,27 @@ load_dotenv()
 
 def main():
     """フィルター検索のデモンストレーション"""
-    
+
     print("=" * 60)
     print("Azure AI Search RAG Toolkit - Filtered Search Demo")
     print("=" * 60)
-    
+
     client = AzureSearchClient()
-    
+
     # ドキュメント数確認
     doc_count = client.get_document_count()
     print(f"\n📊 Index contains {doc_count} documents")
-    
+
     if doc_count == 0:
         print("⚠️  No documents in index. Run batch_upload.py first.")
         return
-    
+
     query = "Azure"
-    
+
     # 1. カテゴリフィルター
-    print(f"\n🏷️  Category Filter: 'Azure'")
+    print("\n🏷️  Category Filter: 'Azure'")
     print("-" * 40)
-    
+
     results = client.search_with_filters(
         query=query,
         categories=["Azure"],
@@ -53,11 +53,11 @@ def main():
     )
     for i, r in enumerate(results, 1):
         print(f"{i}. [{r.category}] {r.title}")
-    
+
     # 2. 複数カテゴリフィルター
-    print(f"\n🏷️  Multiple Categories: 'Azure', 'Security'")
+    print("\n🏷️  Multiple Categories: 'Azure', 'Security'")
     print("-" * 40)
-    
+
     results = client.search_with_filters(
         query=query,
         categories=["Azure", "Security"],
@@ -65,13 +65,13 @@ def main():
     )
     for i, r in enumerate(results, 1):
         print(f"{i}. [{r.category}] {r.title}")
-    
+
     # 3. 日付範囲フィルター
-    print(f"\n📅 Date Range: Last 30 days")
+    print("\n📅 Date Range: Last 30 days")
     print("-" * 40)
-    
+
     date_from = datetime.now() - timedelta(days=30)
-    
+
     results = client.search_with_filters(
         query=query,
         date_from=date_from,
@@ -79,11 +79,11 @@ def main():
     )
     for i, r in enumerate(results, 1):
         print(f"{i}. {r.title}")
-    
+
     # 4. 著者フィルター
-    print(f"\n👤 Author Filter: 'Azure Documentation Team'")
+    print("\n👤 Author Filter: 'Azure Documentation Team'")
     print("-" * 40)
-    
+
     results = client.search_with_filters(
         query=query,
         authors=["Azure Documentation Team"],
@@ -91,14 +91,14 @@ def main():
     )
     for i, r in enumerate(results, 1):
         print(f"{i}. {r.title}")
-    
+
     # 5. 複合フィルター
-    print(f"\n🔧 Combined Filters:")
+    print("\n🔧 Combined Filters:")
     print("   - Category: Azure")
     print("   - Date: Last 30 days")
     print("   - Use Hybrid Search: Yes")
     print("-" * 40)
-    
+
     results = client.search_with_filters(
         query="検索機能",
         categories=["Azure"],
@@ -110,11 +110,11 @@ def main():
         reranker = f" | Reranker: {r.reranker_score:.4f}" if r.reranker_score else ""
         print(f"{i}. [{r.score:.4f}{reranker}] {r.title}")
         print(f"   Category: {r.category}")
-    
+
     # 6. 機密レベルフィルター
-    print(f"\n🔒 Confidentiality Level: 'internal'")
+    print("\n🔒 Confidentiality Level: 'internal'")
     print("-" * 40)
-    
+
     results = client.search_with_filters(
         query=query,
         confidentiality_levels=["internal"],
@@ -122,11 +122,11 @@ def main():
     )
     for i, r in enumerate(results, 1):
         print(f"{i}. {r.title}")
-    
+
     # 7. 直接 OData フィルター
-    print(f"\n📝 Direct OData Filter: category eq 'Architecture'")
+    print("\n📝 Direct OData Filter: category eq 'Architecture'")
     print("-" * 40)
-    
+
     results = client.hybrid_search(
         query="RAG パターン",
         filter_expression="category eq 'Architecture'",
@@ -134,7 +134,7 @@ def main():
     )
     for i, r in enumerate(results, 1):
         print(f"{i}. [{r.category}] {r.title}")
-    
+
     print("\n" + "=" * 60)
     print("Filtered search demo completed!")
 

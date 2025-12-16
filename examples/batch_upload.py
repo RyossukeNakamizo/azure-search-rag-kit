@@ -99,66 +99,66 @@ SAMPLE_DOCUMENTS = [
 def chunk_text(text: str, chunk_size: int = 500, overlap: int = 50) -> list[str]:
     """
     テキストをチャンクに分割
-    
+
     Args:
         text: 分割対象テキスト
         chunk_size: チャンクサイズ（文字数）
         overlap: オーバーラップ（文字数）
-    
+
     Returns:
         チャンクのリスト
     """
     text = " ".join(text.split())  # 空白正規化
-    
+
     if len(text) <= chunk_size:
         return [text]
-    
+
     chunks = []
     start = 0
-    
+
     while start < len(text):
         end = start + chunk_size
-        
+
         # 文の境界で分割（句点を探す）
         if end < len(text):
             boundary = text.rfind("。", start, end)
             if boundary > start:
                 end = boundary + 1
-        
+
         chunks.append(text[start:end].strip())
         start = end - overlap
-    
+
     return chunks
 
 
 def main():
     """バッチアップロードのデモンストレーション"""
-    
+
     print("=" * 60)
     print("Azure AI Search RAG Toolkit - Batch Upload Demo")
     print("=" * 60)
-    
+
     # クライアント初期化
     client = AzureSearchClient()
-    
+
     # インデックス作成（既存の場合は更新）
     schema_path = Path(__file__).parent.parent / "schemas" / "index_schema.json"
     print(f"\n📋 Creating/updating index from: {schema_path}")
-    
+
     try:
         client.create_or_update_index(str(schema_path))
         print("✅ Index ready")
     except Exception as e:
         print(f"⚠️  Index operation: {e}")
-    
+
     # ドキュメント準備
     print(f"\n📄 Preparing {len(SAMPLE_DOCUMENTS)} documents...")
-    
+
     documents = []
     for doc_data in SAMPLE_DOCUMENTS:
         # チャンキング
         chunks = chunk_text(doc_data["content"])
-        
+
         for idx, chunk in enumerate(chunks):
             doc = create_document(
                 document_id=doc_data["document_id"],
@@ -175,23 +175,23 @@ def main():
                 confidentiality_level="internal",
             )
             documents.append(doc)
-    
+
     print(f"   Total chunks: {len(documents)}")
-    
+
     # アップロード（自動ベクトル化）
     print("\n🚀 Uploading documents with auto-vectorization...")
-    
+
     result = client.upload_documents(documents, generate_vectors=True)
-    
-    print(f"\n📊 Upload Results:")
+
+    print("\n📊 Upload Results:")
     print(f"   Total: {result['total']}")
     print(f"   Succeeded: {result['succeeded']}")
     print(f"   Failed: {result['failed']}")
-    
+
     # 確認
     doc_count = client.get_document_count()
     print(f"\n✅ Index now contains {doc_count} documents")
-    
+
     print("\n" + "=" * 60)
     print("Batch upload completed! Run basic_search.py to test.")
 
