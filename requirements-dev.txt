@@ -1,0 +1,21 @@
+# Azure AI Search RAG Kit - Development Dependencies
+
+# Core dependencies
+-r requirements.txt
+
+# Testing
+pytest>=8.0.0
+pytest-cov>=4.1.0
+pytest-asyncio>=0.23.0
+
+# Linting & Formatting
+ruff>=0.3.0
+
+# Type Checking
+mypy>=1.8.0
+types-requests>=2.31.0
+
+# Security
+bandit>=1.7.0
+pip-audit>=2.7.0
+safety>=3.0.0
