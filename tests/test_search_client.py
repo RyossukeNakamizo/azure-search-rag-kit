@@ -108,8 +108,11 @@ class TestAzureSearchClient:
         """Test client raises error when env vars missing"""
         from search_client import AzureSearchClient
 
-        with patch.dict("os.environ", {}, clear=True), pytest.raises(ValueError, match="must be set"):
-                AzureSearchClient()
+        with (
+            patch.dict("os.environ", {}, clear=True),
+            pytest.raises(ValueError, match="must be set"),
+        ):
+            AzureSearchClient()
 
     def test_client_initialization_success(self, mock_env, mock_credential):
         """Test successful client initialization"""
